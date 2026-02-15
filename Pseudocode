@@ -1,0 +1,153 @@
+BEGIN
+
+SECTION 1: CREATE DATABASE
+
+CREATE hospital_db
+
+SECTION 2: CREATE TABLES
+
+CREATE TABLE HOSPITALS
+	SET hospital_id AS PRIMARY KEY
+	ADD name
+	ADD address
+	ADD size
+	ADD type
+	ADD accreditation_status
+	
+CREATE TABLE DOCTORS
+	SET person_id AS PRIMARY KEY
+	ADD name
+	ADD date_of_birth
+	ADD address
+	ADD role
+	SET hospital_id AS FOREIGN KEY REFERENCES HOSPITALS.hospital_id
+
+CREATE TABLE PATIENTS
+	SET person_id AS PRIMARY KEY
+	ADD name
+	ADD date_of_birth
+	ADD address
+	ADD role
+	SET doctor_id AS FOREIGN KEY REFERENCES DOCTORS.person_id
+	
+CREATE TABLE PRESCRIPTIONS
+	SET prescription_id AS PRIMARY KEY
+	SET patient_id AS FOREIGN KEY REFERENCES PATIENTS.person_id
+	SET doctor_id AS FOREIGN KEY REFERENCES DOCTORS.person_id
+	ADD medication
+	ADD prescription_date
+	
+SECTION 3: LOAD DATA
+
+LOAD hospitals.csv INTO HOSPITALS
+LOAD doctors.csv INTO DOCTORS
+LOAD patients.csv INTO PATIENTS
+LOAD prescriptions.csv INTO PRESCRIPTIONS
+VERIFY row count for each table
+
+SECTION 4: QUERIES
+
+QUERY 1:
+	
+	INPUT hospital_id
+	
+	IF hospital_id NOT FOUND IN HOSPITALS.hospital_id
+		OUTPUT "Invalid hospital_id"
+		STOP
+	END IF
+	
+	FOR each doctor IN DOCTORS
+		IF doctor.hospital_id = hospital_id
+			OUTPUT doctor.name, doctor.person_id
+		END IF
+	END FOR
+	
+QUERY 2:
+
+	INPUT patient_id
+
+	IF patient_id NOT FOUND IN PATIENTS.person_id
+		OUTPUT "Invalid patient_id"
+		STOP
+	END IF
+	
+	CREATE empty list patient_prescriptions
+
+	FOR each prescription IN PRESCRIPTIONS 
+		IF prescription.patient_id = patient_id
+			ADD prescription TO patient_prescriptions
+		END IF
+	END FOR
+
+	SORT patient_prescriptions BY prescription.prescription_date ASCENDING
+	
+	OUTPUT patient_prescriptions
+
+QUERY 3:
+
+	INPUT doctor_id
+	
+	IF doctor_id NOT FOUND IN DOCTORS.person_id
+		OUTPUT "Invalid doctor_id"
+		STOP
+	END IF
+	
+	FOR each prescription in PRESCRIPTIONS
+		IF prescription.doctor_id = doctor_id
+			OUTPUT prescription.prescription_id,
+						prescription.medication,
+						prescription.prescription_date
+		END IF
+	END FOR
+	
+QUERY 4:
+
+	INPUT name, date_of_birth, address, role, doctor_id
+	
+	GENERATE new_patient_id
+	
+	CREATE new_patient RECORD
+	SET new_patient.person_id = new_patient_id
+	SET new_patient.name = name
+	SET new_patient.date_of_birth = date_of_birth
+	SET new_patient.address = address
+	SET new_patient.role = role
+	SET new_patient.doctor_id = doctor_id
+	
+	ADD new_patient to PATIENTS
+	
+QUERY 5:
+
+	CREATE empty dictionary doctor_count
+	
+	FOR each prescription IN PRESCRIPTIONS
+		IF prescription.doctor_id NOT IN doctor_count
+			SET doctor_count[prescription.doctor.id] BY 1
+		ELSE
+			INCREMENT doctor_count[prescription.doctor_id] BY 1
+		END IF
+	END FOR
+	
+	FIND doctor_id WITH MAXIMUM value IN doctor_count
+	
+	OUTPUT doctor_id
+	
+QUERY 6:
+
+	SET largest_size = 0
+	SET largest_hospital_id = null
+	
+	FOR each hospital IN HOSPITALS
+		IF hospital.size > largest_size
+			SET largest_size = hospital_size
+			SET largest_hospital_id = hospital.hospital_id
+		END IF
+	END FOR
+	
+	FOR each doctor IN DOCTORS
+		IF doctor.hospital_id = largest_hospital_id
+			OUTPUT doctor.name, doctor.person_id
+		END IF
+	END FOR
+	
+END
