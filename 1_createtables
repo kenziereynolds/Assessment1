@@ -1,0 +1,46 @@
+CREATE DATABASE Hospital_db
+
+USE Hospital_db
+
+CREATE TABLE Hospitals (
+	Hospital_ID INT NOT NULL,
+	Name VARCHAR(150) NOT NULL,
+	Address VARCHAR(150) NOT NULL,
+	Role VARCHAR(150) NOT NULL,
+	Size INT NOT NULL,
+	Type VARCHAR(150) NOT NULL,
+	Accreditation_Status VARCHAR(150) NOT NULL,
+	PRIMARY KEY (Hospital_ID)
+	);
+
+CREATE TABLE Doctors (
+	Person_ID INT NOT NULL,
+	Name VARCHAR(150) NOT NULL,
+	Date_of_birth DATE NOT NULL,
+	Address VARCHAR(150) NOT NULL,
+	Hospital_ID INT NOT NULL,
+	PRIMARY KEY (Person_ID),
+	FOREIGN KEY (Hospital_ID) REFERENCES Hospitals(Hospital_ID)
+	);
+
+CREATE TABLE Patients (
+	Person_ID INT NOT NULL,
+	Name VARCHAR(150) NOT NULL,
+	Date_of_birth DATE NOT NULL,
+	Address VARCHAR(150) NOT NULL,
+	Doctor_ID INT NOT NULL,
+	PRIMARY KEY (Person_ID),
+	FOREIGN KEY (Doctor_ID) REFERENCES Doctors(Person_ID)
+	);
+
+CREATE TABLE Prescriptions (
+	Prescription_ID INT NOT NULL,
+	Patient_ID INT NOT NULL,
+	Doctor_ID INT NOT NULL,
+	Medication VARCHAR(150) NOT NULL,
+	Prescription_Date DATE NOT NULL,
+	PRIMARY KEY (Prescription_ID),
+	FOREIGN KEY (Patient_ID) REFERENCES Patients(Person_ID),
+	FOREIGN KEY (Doctor_ID) REFERENCES Doctors(Person_ID)
+	);
+
