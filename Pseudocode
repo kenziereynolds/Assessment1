@@ -2,151 +2,166 @@ BEGIN
 
 SECTION 1: CREATE DATABASE
 
-CREATE hospital_db
+CREATE Hospital_db
+
+USE Hospital_db
 
 SECTION 2: CREATE TABLES
 
-CREATE TABLE HOSPITALS
-	SET hospital_id AS PRIMARY KEY
-	ADD name
-	ADD address
-	ADD size
-	ADD type
-	ADD accreditation_status
+CREATE TABLE Hospitals
+	ADD Hospital_ID
+	ADD Name
+	ADD Address
+	ADD Size
+	ADD Type
+	ADD Accreditation_status
+	SET Hospital_ID AS PRIMARY KEY
 	
-CREATE TABLE DOCTORS
-	SET person_id AS PRIMARY KEY
-	ADD name
-	ADD date_of_birth
-	ADD address
-	ADD role
-	SET hospital_id AS FOREIGN KEY REFERENCES HOSPITALS.hospital_id
+CREATE TABLE Doctors
+	ADD Person_ID
+	ADD Name
+	ADD Date_of_birth
+	ADD Address
+	ADD Role
+	ADD Hospital_ID
+	SET Person_ID AS PRIMARY KEY
+	SET Hospital_ID AS FOREIGN KEY REFERENCES Hospitals.Hospital_id
 
-CREATE TABLE PATIENTS
-	SET person_id AS PRIMARY KEY
-	ADD name
-	ADD date_of_birth
-	ADD address
-	ADD role
-	SET doctor_id AS FOREIGN KEY REFERENCES DOCTORS.person_id
+CREATE TABLE Patients
+	ADD Person_ID
+	ADD Name
+	ADD Date_of_birth
+	ADD Address
+	ADD Role
+	ADD Doctor_ID
+	SET Person_ID AS PRIMARY KEY
+	SET Doctor_ID AS FOREIGN KEY REFERENCES Doctors.Person_ID
 	
-CREATE TABLE PRESCRIPTIONS
-	SET prescription_id AS PRIMARY KEY
-	SET patient_id AS FOREIGN KEY REFERENCES PATIENTS.person_id
-	SET doctor_id AS FOREIGN KEY REFERENCES DOCTORS.person_id
+CREATE TABLE Prescriptions
+	ADD Prescription_ID
+	ADD Patient_ID
+	ADD Doctor_ID
 	ADD medication
 	ADD prescription_date
+	SET prescription_id AS PRIMARY KEY
+	SET patient_id AS FOREIGN KEY REFERENCES Patients.Person_ID
+	SET doctor_id AS FOREIGN KEY REFERENCES Doctors.Person_ID
 	
 SECTION 3: LOAD DATA
 
-LOAD hospitals.csv INTO HOSPITALS
-LOAD doctors.csv INTO DOCTORS
-LOAD patients.csv INTO PATIENTS
-LOAD prescriptions.csv INTO PRESCRIPTIONS
+LOAD hospitals.csv INTO Hospitals
+LOAD doctors.csv INTO Doctors
+LOAD patients.csv INTO Patients
+LOAD prescriptions.csv INTO Prescriptions
 VERIFY row count for each table
 
 SECTION 4: QUERIES
 
 QUERY 1:
 	
-	INPUT hospital_id
+	INPUT Hospital_ID
 	
-	IF hospital_id NOT FOUND IN HOSPITALS.hospital_id
-		OUTPUT "Invalid hospital_id"
+	IF Hospital_ID NOT FOUND IN Hospitals.Hospital_ID
+		OUTPUT "Invalid Hospital_ID"
 		STOP
 	END IF
 	
-	FOR each doctor IN DOCTORS
-		IF doctor.hospital_id = hospital_id
-			OUTPUT doctor.name, doctor.person_id
+	FOR each doctor IN Doctors
+		IF Doctors.Hospital_ID = Hospital_ID
+			OUTPUT Doctors.Name, Doctors.Person_ID
 		END IF
 	END FOR
 	
 QUERY 2:
 
-	INPUT patient_id
+	INPUT Patient_ID
 
-	IF patient_id NOT FOUND IN PATIENTS.person_id
-		OUTPUT "Invalid patient_id"
+	IF Patient_ID NOT FOUND IN Patients.Person_ID
+		OUTPUT "Invalid Patient_ID"
 		STOP
 	END IF
 	
-	CREATE empty list patient_prescriptions
+	CREATE empty list Patient_Prescriptions
 
-	FOR each prescription IN PRESCRIPTIONS 
-		IF prescription.patient_id = patient_id
-			ADD prescription TO patient_prescriptions
+	FOR each prescription IN Prescriptions 
+		IF Prescriptions.Patient_ID = Patient_ID
+			ADD prescription TO Patient_Prescriptions
 		END IF
 	END FOR
 
-	SORT patient_prescriptions BY prescription.prescription_date ASCENDING
+	SORT Patient_Prescriptions BY Prescriptions.Prescription_date ASCENDING
 	
-	OUTPUT patient_prescriptions
+	OUTPUT Patient_Prescriptions
 
 QUERY 3:
 
-	INPUT doctor_id
+	INPUT Doctor_ID
 	
-	IF doctor_id NOT FOUND IN DOCTORS.person_id
-		OUTPUT "Invalid doctor_id"
+	IF Doctor_ID NOT FOUND IN Doctors.Person_ID
+		OUTPUT "Invalid Doctor_ID"
 		STOP
 	END IF
 	
-	FOR each prescription in PRESCRIPTIONS
-		IF prescription.doctor_id = doctor_id
-			OUTPUT prescription.prescription_id,
-						prescription.medication,
-						prescription.prescription_date
+	FOR each prescription in Prescriptions
+		IF Prescriptions.Doctor_ID = Doctor_ID
+			OUTPUT Prescriptions.Prescription_ID,
+						Prescriptions.Medication,
+						Prescriptions.Prescription_date
 		END IF
 	END FOR
 	
 QUERY 4:
 
-	INPUT name, date_of_birth, address, role, doctor_id
+	INPUT Name, Date_of_birth, Address, Role, Doctor_ID
+		
+		IF Doctor_ID NOT FOUND IN Doctors.Person_ID
+		OUTPUT "Invalid Doctor_ID"
+		STOP
+		END IF
 	
 	GENERATE new_patient_id
 	
 	CREATE new_patient RECORD
-	SET new_patient.person_id = new_patient_id
-	SET new_patient.name = name
-	SET new_patient.date_of_birth = date_of_birth
-	SET new_patient.address = address
-	SET new_patient.role = role
-	SET new_patient.doctor_id = doctor_id
+	SET new_patient.Person_ID = new_patient_id
+	SET new_patient.Name = Name
+	SET new_patient.Date_of_birth = Date_of_birth
+	SET new_patient.Address = Address
+	SET new_patient.Role = Role
+	SET new_patient.Doctor_ID = Doctor_ID
 	
-	ADD new_patient to PATIENTS
+	ADD new_patient to Patients
 	
 QUERY 5:
 
 	CREATE empty dictionary doctor_count
 	
-	FOR each prescription IN PRESCRIPTIONS
-		IF prescription.doctor_id NOT IN doctor_count
-			SET doctor_count[prescription.doctor.id] BY 1
+	FOR each prescription IN Prescriptions
+		IF Prescriptions.Doctor_ID NOT IN doctor_count
+			SET doctor_count[Prescriptions.Doctor_ID] TO 1
 		ELSE
-			INCREMENT doctor_count[prescription.doctor_id] BY 1
+			INCREMENT doctor_count[Prescriptions.Doctor_ID] BY 1
 		END IF
 	END FOR
 	
-	FIND doctor_id WITH MAXIMUM value IN doctor_count
+	FIND Doctor_ID WITH MAXIMUM value IN doctor_count
 	
-	OUTPUT doctor_id
+	OUTPUT Doctor_ID
 	
 QUERY 6:
 
 	SET largest_size = 0
-	SET largest_hospital_id = null
+	SET largest_Hospital_ID = null
 	
-	FOR each hospital IN HOSPITALS
-		IF hospital.size > largest_size
-			SET largest_size = hospital_size
-			SET largest_hospital_id = hospital.hospital_id
+	FOR each hospital IN Hospitals
+		IF hospital.Size > largest_size
+			SET largest_size = hospital.Size
+			SET largest_Hospital_ID = hospital.Hospital_ID
 		END IF
 	END FOR
 	
-	FOR each doctor IN DOCTORS
-		IF doctor.hospital_id = largest_hospital_id
-			OUTPUT doctor.name, doctor.person_id
+	FOR each doctor IN Doctors
+		IF doctor.Hospital_ID = largest_Hospital_ID
+			OUTPUT doctor.Name, doctor.Person_ID
 		END IF
 	END FOR
 	
