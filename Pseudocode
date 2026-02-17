@@ -61,11 +61,6 @@ QUERY 1:
 	
 	INPUT Hospital_ID
 	
-	IF Hospital_ID NOT FOUND IN Hospitals.Hospital_ID
-		OUTPUT "Invalid Hospital_ID"
-		STOP
-	END IF
-	
 	FOR each doctor IN Doctors
 		IF Doctors.Hospital_ID = Hospital_ID
 			OUTPUT Doctors.Name, Doctors.Person_ID
@@ -75,11 +70,6 @@ QUERY 1:
 QUERY 2:
 
 	INPUT Patient_ID
-
-	IF Patient_ID NOT FOUND IN Patients.Person_ID
-		OUTPUT "Invalid Patient_ID"
-		STOP
-	END IF
 	
 	CREATE empty list Patient_Prescriptions
 
@@ -97,11 +87,6 @@ QUERY 3:
 
 	INPUT Doctor_ID
 	
-	IF Doctor_ID NOT FOUND IN Doctors.Person_ID
-		OUTPUT "Invalid Doctor_ID"
-		STOP
-	END IF
-	
 	FOR each prescription in Prescriptions
 		IF Prescriptions.Doctor_ID = Doctor_ID
 			OUTPUT Prescriptions.Prescription_ID,
@@ -113,11 +98,6 @@ QUERY 3:
 QUERY 4:
 
 	INPUT Name, Date_of_birth, Address, Role, Doctor_ID
-		
-		IF Doctor_ID NOT FOUND IN Doctors.Person_ID
-		OUTPUT "Invalid Doctor_ID"
-		STOP
-		END IF
 	
 	GENERATE new_patient_id
 	
