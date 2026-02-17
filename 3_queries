@@ -1,0 +1,27 @@
+SELECT Name, Person_ID
+FROM Doctors
+WHERE Hospital_ID=7;
+
+SELECT *
+FROM Prescriptions
+WHERE Patient_ID = 621
+ORDER BY Prescription_Date;
+
+SELECT *
+FROM Prescriptions
+WHERE Doctor_ID = 94;
+
+INSERT INTO Patients (Person_ID, Name, Date_of_birth, Address, Role, Doctor_ID) 
+VALUES (701, 'Kenzie Reynolds', '2004-03-14', '1 Cae Garw, Oakdale', 'Patient', 3);
+
+SELECT Doctor_ID
+FROM Prescriptions
+GROUP BY Doctor_ID
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+
+SELECT Doctors.Name, Doctors.Person_ID
+FROM Doctors
+INNER JOIN Hospitals 
+ON Doctors.Hospital_ID = Hospitals.Hospital_ID
+WHERE Hospitals.Size = (SELECT MAX(Size) FROM Hospitals);
