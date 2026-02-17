@@ -6,7 +6,6 @@ CREATE TABLE Hospitals (
 	Hospital_ID INT NOT NULL,
 	Name VARCHAR(150) NOT NULL,
 	Address VARCHAR(150) NOT NULL,
-	Role VARCHAR(150) NOT NULL,
 	Size INT NOT NULL,
 	Type VARCHAR(150) NOT NULL,
 	Accreditation_Status VARCHAR(150) NOT NULL,
@@ -19,6 +18,7 @@ CREATE TABLE Doctors (
 	Date_of_birth DATE NOT NULL,
 	Address VARCHAR(150) NOT NULL,
 	Hospital_ID INT NOT NULL,
+	Role VARCHAR(150) NOT NULL,
 	PRIMARY KEY (Person_ID),
 	FOREIGN KEY (Hospital_ID) REFERENCES Hospitals(Hospital_ID)
 	);
@@ -29,6 +29,7 @@ CREATE TABLE Patients (
 	Date_of_birth DATE NOT NULL,
 	Address VARCHAR(150) NOT NULL,
 	Doctor_ID INT NOT NULL,
+	Role VARCHAR(150) NOT NULL,
 	PRIMARY KEY (Person_ID),
 	FOREIGN KEY (Doctor_ID) REFERENCES Doctors(Person_ID)
 	);
