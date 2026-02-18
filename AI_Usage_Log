@@ -1,12 +1,21 @@
 Tool Used: ChatGPT
 
-Nature of Use: This AI tool was used in accordance with the University of Exeter's AI-assessment guidance.
+Nature of Use: This AI tool was used in accordance with the University of Exeter's AI-assessment guidance. AI was used for clarification and debugging, not code generation.
 
-AI was used for:
-
+Prompt Log
 Prompt: What should I set VARCHAR to?
 Output: For names, around 100.
+Action: VARCHAR set to 150 to ensure suitable capacity for names, whilst avoiding an unnecessary large size. 
 
 Input: Photos of ERD and pseudocode,
 Prompt: How does this look?
 Output: Pointed out inconsistencies with naming across files.
+Action: Renamed field names to match across all files for continuity.
+
+Prompt (in relation to query 5): "SELECT Doctor_ID
+FROM Prescriptions
+GROUP BY Doctor_ID
+ORDER BY Prescription_ID DESC
+LIMIT 1;"
+Output: Explained structure - SELECT, FROM, GROUP BY COUNT () DESC, LIMIT.
+Action: Modified query to include COUNT() and order by value.
