@@ -24,3 +24,4 @@ ERD.png and Pseudocode show the entity relationship diagram and pseudocode (resp
 Database.sql is the final, exported database.
 
 The queries demonstrate filtering, ordering, aggregation and JOIN usage.
+Finally, the AI_usage_log details how AI was used throughout this project.
